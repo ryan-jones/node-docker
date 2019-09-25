@@ -1,6 +1,7 @@
-FROM node:9-slim
-WORKDIR /src
-COPY package.json /src
+FROM node:11-slim
+WORKDIR usr/src/app
+COPY package*.json ./
 RUN npm install
-COPY . /src
+COPY . .
+EXPOSE 3000
 CMD ["npm", "start"]
