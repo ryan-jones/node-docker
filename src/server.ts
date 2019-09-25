@@ -11,8 +11,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(morgan('dev'));
 
+// mongoose
+//   .connect('mongodb://mongo:27017/docker-node', { useNewUrlParser: true })
+//   .then(() => console.log('MongoDb connected'))
+//   .catch((err: any) => console.error(err));
+
 mongoose
-  .connect('mongodb://mongo:27017/docker-node', { useNewUrlParser: true })
+  .connect('mongodb://localhost:27017/docker-node', { useNewUrlParser: true })
   .then(() => console.log('MongoDb connected'))
   .catch((err: any) => console.error(err));
 

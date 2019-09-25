@@ -1,59 +1,59 @@
 import Profile from '../models/profile';
+import { alreadyExists, badRequest, notFound } from '../utils/errorHandlers';
+import { checkReqInvalid } from '../utils/validators';
+import { NextFunction as Next, Request, Response } from 'express';
 
-function checkIsInvalid(values: any[], next) {
-  console.log(
-    'values',
-    Object.keys(values).some((key: any) => values[key] === undefined)
-  );
-  if (Object.keys(values).some((key: any) => values[key] === undefined)) {
-    badRequest(next);
-  }
+interface IProfile {
+  firstName: string;
+  lastName: string;
+  email: string;
 }
 
-function badRequest(next) {
-  const err: any = new Error(
-    'Bad request. Profile is missing a required value'
-  );
-  err.statusCode = 400;
-  return next(err);
-}
-
-export async function getProfiles(req, res, next) {
+export async function getProfiles(req: Request, res: Response, next: Next) {
   try {
-    const profiles = await Profile.find();
-    res.json({ profiles });
-  } catch (err) {
-    res.status(404).json({ message: 'no profile exists' });
-  }
-}
-
-export async function getProfile(req, res, next) {
-  const id = req.params.id;
-  try {
-    const profile = await Profile.findById(id);
-    res.json({ profile });
+    const profiles: IProfile[] = await Profile.find();
+    profiles.length > 0
+      ? res.json({ profiles })
+      : notFound(res, 'no profile exists');
   } catch (err) {
     next(err);
   }
 }
 
-export async function createProfile(req, res, next) {
-  checkIsInvalid(req.body, next);
-  console.log('BODYYYYYYYY', req.body);
-  const { email, firstName, lastName } = req.body;
-  console.log('email', email);
-  console.log('firstName', firstName);
-  console.log('lastName', lastName);
+export async function getProfile(req: Request, res: Response, next: Next) {
+  const id: string = req.params.id;
+  try {
+    const profile: IProfile = await Profile.findById(id);
+    profile
+      ? res.json({ profile })
+      : notFound(res, `Profile with id ${id} not found`);
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function createProfile(req: Request, res: Response, next: Next) {
+  const required = ['firstName', 'lastName', 'email'];
+
+  if (checkReqInvalid(req.body, required)) {
+    badRequest(
+      res,
+      required.filter((value: string) => req.body[value] === undefined)
+    );
+  }
+
   const newProfile = new Profile({
-    email,
-    firstName,
-    lastName
+    email: req.body.email,
+    firstName: req.body.firstName,
+    lastName: req.body.lastName
   });
   try {
     await newProfile.save();
     res.send({ message: 'profile successfully added!' });
   } catch (err) {
-    console.error(err);
+    if (err.code === 11000) {
+      alreadyExists(res, 'A user with this email already exists');
+    }
     next(err);
   }
 }

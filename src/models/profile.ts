@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import isEmail from 'validator/lib/isEmail';
 
 const Schema = mongoose.Schema;
 
@@ -9,7 +10,9 @@ const ProfileSchema = new Schema({
   },
   email: {
     required: true,
-    type: String
+    type: String,
+    unique: true,
+    validate: [isEmail, 'please enter a valid email']
   },
   firstName: {
     required: true,
