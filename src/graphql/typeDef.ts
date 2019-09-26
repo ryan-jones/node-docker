@@ -17,5 +17,12 @@ export const typeDefs = gql`
       lastName: String!
       email: String!
     ): Profile!
+    updateProfile(
+      id: ID!
+      firstName: String
+      lastName: String
+      email: String
+    ): Profile!
+    deleteProfile(id: ID!): Profile
   }
 `;

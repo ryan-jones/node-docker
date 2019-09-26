@@ -7,6 +7,7 @@ export interface IProfile {
   firstName: string;
   lastName: string;
   email: string;
+  id?: string;
 }
 
 export async function getProfiles(): Promise<IProfile[]> {
@@ -44,5 +45,28 @@ export async function createProfile(params: IProfile): Promise<IProfile> {
     return newProfile;
   } catch (err) {
     throw new ApolloError('There was a server error when saving profile');
+  }
+}
+
+export async function updateProfile(params: IProfile): Promise<IProfile> {
+  const { firstName, lastName, email, id } = params;
+  try {
+    const result: IProfile = await Profile.findOneAndUpdate(
+      { _id: id },
+      { $set: { firstName, lastName, email } },
+      { new: true }
+    );
+    return result;
+  } catch (err) {
+    throw new UserInputError(`Profile with id ${id} not found`);
+  }
+}
+
+export async function deleteProfile(id: string): Promise<IProfile> {
+  try {
+    const result: IProfile = await Profile.findOneAndRemove({ _id: id });
+    return result;
+  } catch (err) {
+    throw new UserInputError(`Profile with id ${id} not found`);
   }
 }
