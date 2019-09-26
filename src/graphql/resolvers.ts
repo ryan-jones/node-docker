@@ -1,28 +1,16 @@
-import Profile from '../models/profile';
-import { IProfile } from '../controllers/profile';
-import mongoose from 'mongoose';
+import {
+  createProfile,
+  getProfiles,
+  getProfile,
+  IProfile
+} from '../services/profile';
 
 export const resolvers = {
   Query: {
-    profiles: async () => {
-      const result = await Profile.find();
-      return result;
-    },
-    profile: async (_, params) => {
-      const profile: IProfile = await Profile.findById(params.id);
-      return profile ? profile : `Profile with id ${params.id} not found`;
-    }
+    profiles: () => getProfiles(),
+    profile: (_: any, params: { id: string }) => getProfile(params.id)
   },
   Mutation: {
-    createProfile: async (_: any, params: any) => {
-      // const required = ['firstName', 'lastName', 'email'];
-      const newProfile = new Profile({
-        email: params.email,
-        firstName: params.firstName,
-        lastName: params.lastName
-      });
-      await newProfile.save();
-      return newProfile;
-    }
+    insertProfile: (_: any, params: IProfile) => createProfile(params)
   }
 };

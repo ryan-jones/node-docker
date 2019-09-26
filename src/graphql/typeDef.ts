@@ -8,11 +8,11 @@ export const typeDefs = gql`
     email: String!
   }
   type Query {
-    profiles: [Profile!]!
-    profile(id: ID!): Profile!
+    profiles: [Profile]!
+    profile(id: ID!): Profile
   }
   type Mutation {
-    createProfile(
+    insertProfile(
       firstName: String!
       lastName: String!
       email: String!

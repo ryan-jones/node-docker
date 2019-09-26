@@ -2,7 +2,6 @@ import bodyParser from 'body-parser';
 import express from 'express';
 import mongoose from 'mongoose';
 import morgan from 'morgan';
-import routes from './routes';
 import { ApolloServer, gql } from 'apollo-server-express';
 import { typeDefs, resolvers } from './graphql';
 
@@ -23,20 +22,18 @@ mongoose
   .then(() => console.log('MongoDb connected'))
   .catch((err: any) => console.error(err));
 
-// app.use('/api/v1', routes);
-
-// app.get('*', (req, res, next) => {
-//   const err: any = new Error('Page Not Found');
-//   err.statusCode = 404;
-//   next(err);
-// });
-
 const server = new ApolloServer({
   typeDefs,
   resolvers
 });
 
 server.applyMiddleware({ app });
+
+app.get('*', (req, res, next) => {
+  const err: any = new Error('Page Not Found');
+  err.statusCode = 404;
+  next(err);
+});
 
 app.use((err, req, res, next) => {
   console.error(err.message);
