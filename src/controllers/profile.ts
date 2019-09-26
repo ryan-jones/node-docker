@@ -3,7 +3,7 @@ import { alreadyExists, badRequest, notFound } from '../utils/errorHandlers';
 import { checkReqInvalid } from '../utils/validators';
 import { NextFunction as Next, Request, Response } from 'express';
 
-interface IProfile {
+export interface IProfile {
   firstName: string;
   lastName: string;
   email: string;

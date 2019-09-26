@@ -5,6 +5,8 @@
     "quotemark": [true, "single", "jsx-double"],
     "no-console": false,
     "trailing-comma": false,
-    "ordered-imports": false
+    "ordered-imports": false,
+    "label-position": false,
+    "object-literal-sort-keys": false
   }
 }
