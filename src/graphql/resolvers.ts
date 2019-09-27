@@ -6,15 +6,26 @@ import {
   deleteProfile,
   IProfile
 } from '../services/profile';
+import { login } from '../services/auth';
+import { checkAuth as check } from '../utils/validators';
+
+interface ILogin {
+  email: string;
+  password: string;
+}
 
 export const resolvers = {
   Query: {
-    profiles: () => getProfiles(),
-    profile: (_: any, params: { id: string }) => getProfile(params.id)
+    profiles: (_: any, args, context) => check(context) && getProfiles(),
+    profile: (_: any, args: { id: string }, context) =>
+      check(context) && getProfile(args.id),
+    login: (_: any, { email, password }: ILogin) => login(email, password)
   },
   Mutation: {
-    insertProfile: (_: any, params: IProfile) => createProfile(params),
-    updateProfile: (_: any, params: IProfile) => updateProfile(params),
-    deleteProfile: (_: any, params: { id: string }) => deleteProfile(params.id)
+    insertProfile: (_: any, args: IProfile) => createProfile(args),
+    updateProfile: (_: any, args: IProfile, context) =>
+      check(context) && updateProfile(args),
+    deleteProfile: (_: any, args: { id: string }, context) =>
+      check(context) && deleteProfile(args.id)
   }
 };

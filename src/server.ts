@@ -4,6 +4,9 @@ import mongoose from 'mongoose';
 import morgan from 'morgan';
 import { ApolloServer } from 'apollo-server-express';
 import { typeDefs, resolvers } from './graphql';
+import isAuth from '../src/middlewares/auth';
+import { checkAuth } from './utils/validators';
+import { IRequest } from './services/profile';
 
 const app = express();
 app.use(bodyParser.json());
@@ -11,6 +14,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(express.static('public'));
 app.use(morgan('dev'));
+
+app.use(isAuth);
 
 // mongoose
 //   .connect('mongodb://mongo:27017/docker-node', { useNewUrlParser: true })
@@ -24,7 +29,8 @@ mongoose
 
 const server = new ApolloServer({
   typeDefs,
-  resolvers
+  resolvers,
+  context: ({ req }: any) => ({ isAuth: req.isAuth })
 });
 
 server.applyMiddleware({ app });

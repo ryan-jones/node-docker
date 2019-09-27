@@ -1,4 +1,4 @@
-import { UserInputError } from 'apollo-server-core';
+import { UserInputError, ApolloError } from 'apollo-server-core';
 
 export function badRequest(values: string[]) {
   let message = 'Bad request: ';
@@ -10,4 +10,8 @@ export function badRequest(values: string[]) {
     message += `${fields} & ${lastValue} are invalid`;
   }
   throw new UserInputError(message);
+}
+
+export function unauthorized() {
+  throw new ApolloError('You need to login first', '401');
 }
