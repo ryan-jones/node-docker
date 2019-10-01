@@ -5,8 +5,6 @@ import morgan from 'morgan';
 import { ApolloServer } from 'apollo-server-express';
 import { typeDefs, resolvers } from './graphql';
 import isAuth from '../src/middlewares/auth';
-import { checkAuth } from './utils/validators';
-import { IRequest } from './services/profile';
 
 const app = express();
 app.use(bodyParser.json());

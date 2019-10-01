@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import isEmail from 'validator/lib/isEmail';
-
+import { CountrySchema } from './country';
 const Schema = mongoose.Schema;
 
 const ProfileSchema = new Schema({
@@ -25,7 +25,8 @@ const ProfileSchema = new Schema({
   password: {
     required: true,
     type: String
-  }
+  },
+  nationalities: [CountrySchema]
 });
 
 export default mongoose.model('profile', ProfileSchema);
