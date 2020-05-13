@@ -89,6 +89,7 @@ describe("Testing Profile Queries and Mutations", () => {
 
 		it("Should reject query if user is not authenticated", async () => {
 			const { query } = setClientWithContext(false);
+
 			const res = await query({
 				query: getProfile,
 				variables: {

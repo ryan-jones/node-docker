@@ -5,7 +5,7 @@ import {
 	UserInputError,
 } from "apollo-server-express";
 import { alreadyExists } from "../utils/errorHandlers";
-import { setUpdatedValues, findInadmissable } from "../utils/updateHandlers";
+import { findInadmissable } from "../utils/updateHandlers";
 
 export interface ICountry {
 	name: string;
