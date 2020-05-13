@@ -7,7 +7,7 @@
 		"build": "tsc",
 		"prestart": "npm run build",
 		"start": "ts-node-dev src/server.ts",
-		"test": "jest"
+		"test": "jest --runInBand"
 	},
 	"keywords": [],
 	"author": "",
@@ -30,7 +30,6 @@
 		"@types/node": "^12.7.5",
 		"apollo-boost": "^0.4.8",
 		"apollo-server-testing": "^2.13.1",
-		"cross-fetch": "^3.0.4",
 		"jest": "^26.0.1",
 		"ts-jest": "^25.5.1",
 		"ts-loader": "^6.2.1",

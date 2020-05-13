@@ -1,13 +1,12 @@
 import { gql } from "apollo-server-express";
 import Profile from "../models/profile";
 import {
-	server,
+	setClientWithContext,
 	connectToDb,
 	dropTestDb,
 	closeDbConnection,
-} from "../__testSetup__/setup";
+} from "../__testSetup__";
 import { GraphQLError } from "graphql";
-import { createTestClient } from "apollo-server-testing";
 
 beforeAll(async () => {
 	await connectToDb();
@@ -22,7 +21,7 @@ let id;
 
 describe("Testing Profile Queries and Mutations", () => {
 	describe("Create Profile", () => {
-		const { mutate } = createTestClient(server);
+		const { mutate } = setClientWithContext(true);
 		const createProfile = gql`
 			mutation insertProfile($profile: ProfileInput!) {
 				insertProfile(profile: $profile) {
@@ -54,13 +53,13 @@ describe("Testing Profile Queries and Mutations", () => {
 		});
 
 		it("should not create two profiles with the same email", async () => {
-			const { errors } = await mutate({
+			const res = await mutate({
 				mutation: createProfile,
 				variables: {
 					profile,
 				},
 			});
-			expect(errors).toEqual([new GraphQLError("User already exists")]);
+			expect(res.errors).toEqual([new GraphQLError("User already exists")]);
 		});
 	});
 
@@ -76,8 +75,7 @@ describe("Testing Profile Queries and Mutations", () => {
 		`;
 
 		it("Should fetch the user profile if authenticated and with a valid id", async () => {
-			server.context = () => ({ isAuth: true });
-			const { query } = createTestClient(server);
+			const { query } = setClientWithContext(true);
 
 			const res = await query({
 				query: getProfile,
@@ -90,8 +88,7 @@ describe("Testing Profile Queries and Mutations", () => {
 		});
 
 		it("Should reject query if user is not authenticated", async () => {
-			server.context = () => ({ isAuth: false });
-			const { query } = createTestClient(server);
+			const { query } = setClientWithContext(false);
 			const res = await query({
 				query: getProfile,
 				variables: {

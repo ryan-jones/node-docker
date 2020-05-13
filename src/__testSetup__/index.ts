@@ -1,14 +1,15 @@
-import { createTestClient } from "apollo-server-testing";
 import { ApolloServer } from "apollo-server-express";
 import mongoose from "mongoose";
 import { typeDefs, resolvers } from "../graphql";
 import { IAuth } from "../interfaces";
-import dotenv from "dotenv";
+import { config } from "dotenv";
 import bodyParser from "body-parser";
 import express from "express";
 import isAuth from "../middlewares/auth";
+import { createTestClient } from "apollo-server-testing";
+import { IReq } from "../server";
 
-dotenv.config();
+config();
 
 const app = express();
 app.use(bodyParser.json());
@@ -40,9 +41,6 @@ export const closeDbConnection = async () => {
 	await mongoose.connection.close().catch((error) => console.error(error));
 };
 
-type IReq = {
-	req: IAuth;
-};
 export const server: any = new ApolloServer({
 	typeDefs,
 	resolvers,
@@ -50,3 +48,8 @@ export const server: any = new ApolloServer({
 });
 
 server.applyMiddleware({ app });
+
+export const setClientWithContext = (isAuth: boolean) => {
+	server.context = () => ({ isAuth });
+	return createTestClient(server);
+};
