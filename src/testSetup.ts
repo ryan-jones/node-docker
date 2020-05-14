@@ -8,8 +8,6 @@ import isAuth from "./middlewares/auth";
 import { createTestClient } from "apollo-server-testing";
 import { IReq } from "./server";
 
-config();
-
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -18,10 +16,10 @@ app.use(express.static("public"));
 
 app.use(isAuth);
 
-// console.log("OUR MONGO_URI", process.env.MONGO_TEST_URI);
 export const connectToDb = async () => {
+	config();
 	await mongoose
-		.connect("mongodb://localhost:27017/test-docker-node", {
+		.connect(process.env.MONGO_TEST_URI, {
 			useNewUrlParser: true,
 			useUnifiedTopology: true,
 		})

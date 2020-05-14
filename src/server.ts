@@ -6,8 +6,10 @@ import { ApolloServer } from "apollo-server-express";
 import { typeDefs, resolvers } from "./graphql";
 import isAuth from "./middlewares/auth";
 import { IAuth } from "./interfaces";
+import { config } from "dotenv";
 
 const app = express();
+config();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -16,13 +18,11 @@ app.use(morgan("dev"));
 
 app.use(isAuth);
 
-// mongoose
-// 	.connect("mongodb://mongo:27017/docker-node", { useNewUrlParser: true })
-// 	.then(() => console.log("MongoDb connected"))
-// 	.catch((err: any) => console.error(err));
-
 mongoose
-	.connect("mongodb://localhost:27017/docker-node", { useNewUrlParser: true })
+	.connect(process.env.MONGO_DOCKER_URI, {
+		useNewUrlParser: true,
+		useUnifiedTopology: true,
+	})
 	.then(() => console.log("MongoDb connected"))
 	.catch((err: any) => console.error(err));
 
