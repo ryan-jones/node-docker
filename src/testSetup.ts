@@ -1,13 +1,12 @@
 import { ApolloServer } from "apollo-server-express";
 import mongoose from "mongoose";
-import { typeDefs, resolvers } from "../graphql";
-import { IAuth } from "../interfaces";
+import { typeDefs, resolvers } from "./graphql";
 import { config } from "dotenv";
 import bodyParser from "body-parser";
 import express from "express";
-import isAuth from "../middlewares/auth";
+import isAuth from "./middlewares/auth";
 import { createTestClient } from "apollo-server-testing";
-import { IReq } from "../server";
+import { IReq } from "./server";
 
 config();
 

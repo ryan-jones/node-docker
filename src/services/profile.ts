@@ -43,17 +43,6 @@ export async function createProfile(params: IProfile): Promise<IProfile> {
 	const { email, password, firstName, lastName } = params;
 	try {
 		const hashedPassword = await bcrypt.hash(password, 12);
-		// const nationalities: ICountry[] = await Promise.all(
-		// 	params.nationalities.map(async (nationality: string) => {
-		// 		const { name, countryCode } = await Country.findOne({
-		// 			_id: nationality,
-		// 		});
-		// 		return {
-		// 			name,
-		// 			countryCode,
-		// 		};
-		// 	})
-		// );
 		const newProfile = new Profile({
 			email,
 			firstName,

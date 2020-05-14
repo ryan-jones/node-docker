@@ -14,6 +14,7 @@ import {
 	createCountries,
 	updateCountry,
 	getCountries,
+	getCountry,
 } from "../services/country";
 import { IAuth } from "../interfaces";
 
@@ -30,6 +31,8 @@ export const resolvers = {
 			check(context) && getProfile(args.id),
 		login: (_: void, { email, password }: ILogin) => login(email, password),
 		countries: (_: void, args: void) => getCountries(),
+		country: (_: void, args: { countryCode: string }) =>
+			getCountry(args.countryCode),
 	},
 	Mutation: {
 		insertProfile: (_: void, args: { profile: IProfile }) =>

@@ -5,7 +5,7 @@ import {
 	connectToDb,
 	dropTestDb,
 	closeDbConnection,
-} from "../__testSetup__";
+} from "../testSetup";
 import { GraphQLError } from "graphql";
 
 beforeAll(async () => {
@@ -17,7 +17,7 @@ afterAll(async () => {
 	await closeDbConnection();
 });
 
-let id;
+let id = "";
 
 describe("Testing Profile Queries and Mutations", () => {
 	describe("Create Profile", () => {
@@ -98,6 +98,19 @@ describe("Testing Profile Queries and Mutations", () => {
 			});
 			expect(res.data.profile).toBeNull();
 			expect(res.errors).toEqual([new GraphQLError("You need to login first")]);
+		});
+
+		it("Should error out if profile does not exist", async () => {
+			const { query } = setClientWithContext(true);
+			const res = await query({
+				query: getProfile,
+				variables: {
+					id: "123456",
+				},
+			});
+			expect(res.errors).toEqual([
+				new GraphQLError("Profile with id 123456 not found"),
+			]);
 		});
 	});
 });

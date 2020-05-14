@@ -43,6 +43,7 @@ export const typeDefs = gql`
 		profile(id: ID!): Profile
 		login(email: String!, password: String!): AuthData!
 		countries: [Country!]!
+		country(countryCode: String!): Country!
 	}
 	type Mutation {
 		insertProfile(profile: ProfileInput!): Profile!

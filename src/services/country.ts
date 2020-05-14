@@ -4,8 +4,6 @@ import {
 	ApolloError,
 	UserInputError,
 } from "apollo-server-express";
-import { alreadyExists } from "../utils/errorHandlers";
-import { findInadmissable } from "../utils/updateHandlers";
 
 export interface ICountry {
 	name: string;
@@ -17,6 +15,18 @@ export async function getCountries(): Promise<ICountry[]> {
 	try {
 		const countries: ICountry[] = await Country.find();
 		return countries;
+	} catch (err) {
+		throw new ApolloError(err);
+	}
+}
+
+export async function getCountry(countryCode: string): Promise<ICountry> {
+	try {
+		const country: ICountry = await Country.findOne({ countryCode });
+		if (!country) {
+			throw new UserInputError("Country does not exist");
+		}
+		return country;
 	} catch (err) {
 		throw new ApolloError(err);
 	}
@@ -46,23 +56,24 @@ export async function createCountries(
 ): Promise<ICountry[]> {
 	try {
 		const existingCountries: ICountry[] = await Country.find();
-		const inadmissable: string[] = findInadmissable(
-			countries,
-			existingCountries
-		);
 
-		if (inadmissable.length > 0) {
-			alreadyExists(inadmissable);
-		}
-		const admissableCountries = countries.map(
-			(country: ICountry) =>
-				new Country({
-					name: country.name,
-					countryCode: country.countryCode,
-				})
+		const admissableCountries = countries.reduce(
+			(countries: ICountry[], country: ICountry) => {
+				return existingCountries.find(
+					(extCountry) => extCountry.name === country.name
+				)
+					? countries
+					: countries.concat(
+							new Country({
+								name: country.name,
+								countryCode: country.countryCode,
+							})
+					  );
+			},
+			[]
 		);
-		await Country.insertMany(admissableCountries);
-		return admissableCountries;
+		const returnedCountries = await Country.insertMany(admissableCountries);
+		return returnedCountries;
 	} catch (err) {
 		throw new ApolloError(err);
 	}
